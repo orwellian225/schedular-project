@@ -1,0 +1,35 @@
+{
+    "mlqf": {
+        "results": [
+            { "size": "Small", "score": 171.84 },
+            { "size": "Medium", "score": 766.04 },
+            { "size": "Large", "score": 4422.79 }
+        ]
+    },
+    "my_configs": [
+        {
+            "name": "First Attempt",
+            "structure": [
+                { "type": 0, "drop_q": 1, "boost_q": -1, "max_drop_t": 1, "max_boost_t": -1, "io_boost_q": -1 },
+                { "type": 1, "drop_q": -1, "boost_q": -1, "max_drop_t": -1, "max_boost_t": -1, "io_boost_q": -1 }
+            ],
+            "results": [
+                { "size": "Small", "score": 164.18 },
+                { "size": "Medium", "score": 740.57 },
+                { "size": "Large", "score": 4363.78 }
+            ]
+        },
+        {
+            "name": "IO Boosting",
+            "structure": [
+                { "type": 0, "drop_q": 1, "boost_q": -1, "max_drop_t": 1, "max_boost_t": -1, "io_boost_q": -1 },
+                { "type": 1, "drop_q": -1, "boost_q": -1, "max_drop_t": -1, "max_boost_t": -1, "io_boost_q": 1 }
+            ],
+            "results": [
+                { "size": "Small", "score": 163.98 },
+                { "size": "Medium", "score": 740.49 },
+                { "size": "Large", "score": 4362.7 }
+            ]
+        }
+    ]
+}
