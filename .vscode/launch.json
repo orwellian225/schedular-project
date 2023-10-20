@@ -15,5 +15,14 @@
                 "data_test.txt"
             ]
         }
+        {
+            "name": "Python: GA",
+            "type": "python",
+            "request": "launch",
+            "program": "ga/main.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": []
+        }
     ]
 }

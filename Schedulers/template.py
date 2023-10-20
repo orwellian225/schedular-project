@@ -335,7 +335,8 @@ def main():
         max_time += m.floor((p.duration - 1) / p.io_frequency ) if p.io_frequency != 0 else 0
 
     queue_params = [
-        { 'type': 2, 'drop_q': -1, 'boost_q': -1, 'max_drop_t': 1, 'max_boost_t': -1, 'io_boost_q': -1, 'max_rr_t': 3 },
+        { "type": 0, "drop_q": 1, "boost_q": -1, "max_drop_t": 1, "max_boost_t": -1, "io_boost_q": -1 },
+        { "type": 1, "drop_q": -1, "boost_q": -1, "max_drop_t": -1, "max_boost_t": -1, "io_boost_q": 1 }
     ]
 
     scheduler = Scheduler(queue_params)

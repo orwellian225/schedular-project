@@ -144,6 +144,8 @@ else:
         if user_output[k] != user_output[k+1]:
             process_switch_time += 1
 
+    print()
+
     metrics = np.array(metrics)
 
     # Calculate the average metrics
