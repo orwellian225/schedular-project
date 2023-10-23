@@ -40,6 +40,7 @@ class FCFS:
         self.max_boost_t = max_boost_t
         self.drop_q = None
         self.boost_q = None
+        self.io_boost_q = None
         self.jobs: list[FCFSJob] = []
         self.size = 0
 
@@ -59,23 +60,27 @@ class FCFS:
             # Remove the job
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
-        if '!' in output:
+        if self.io_boost_q != None and '!' in output:
             self.io_boost_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         if self.boost_q != None and self.jobs[0].boost_t == self.max_boost_t:
             # Boost the job
             self.boost_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         if self.drop_q != None and self.jobs[0].drop_t == self.max_drop_t:
             # Drop the job
             self.drop_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         return output
 
@@ -132,18 +137,21 @@ class STCF:
             self.io_boost_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         if self.boost_q != None and self.jobs[0].boost_t == self.max_boost_t:
             # Boost the job
             self.boost_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         if self.drop_q != None and self.jobs[0].drop_t == self.max_drop_t:
             # Drop the job
             self.drop_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         return output
 
@@ -202,23 +210,27 @@ class RR:
             temp.rr_t = 0
             self.jobs.pop(0)
             self.jobs.append(temp)
+            return output
 
         if self.io_boost_q != None and '!' in output:
             self.io_boost_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         if self.boost_q != None and self.jobs[0].boost_t == self.max_boost_t:
             # Boost the job
             self.boost_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         if self.drop_q != None and self.jobs[0].drop_t == self.max_drop_t:
             # Drop the job
             self.drop_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         return output
 
@@ -230,6 +242,36 @@ class RR:
 
     def set_io_boost(self, queue):
         self.io_boost_q = queue
+
+def construct_scheduler_structure(genome: int) -> list[dict[str, int]]:
+    num_queue_types = 3
+    num_queues = ( genome >> 768 ) + 1
+
+    structure = []
+
+    queue_genome_length = 48
+    for i in range(num_queues):
+        queue_genome = ( genome >> (768 - (i + 1) * queue_genome_length) ) & (2**queue_genome_length - 1)
+
+        queue_type = ( queue_genome >> (queue_genome_length - 2 ) ) % num_queue_types
+        queue_drop = (( queue_genome >> queue_genome_length - 6 ) & 0xf ) % num_queues 
+        queue_boost = (( queue_genome >> queue_genome_length - 12 ) & 0xf ) % num_queues
+        queue_io_boost = (( queue_genome >> queue_genome_length - 16 ) & 0xf ) % num_queues
+        queue_drop_t = ( queue_genome >> queue_genome_length - 24 ) & 0xff
+        queue_boost_t = ( queue_genome >> queue_genome_length - 32 ) & 0xff
+        queue_rr_t = ( queue_genome >> queue_genome_length - 40 ) & 0xff
+
+        structure.append({
+            "type": queue_type, 
+            "drop_q": queue_drop if queue_drop != i else -1,
+            "boost_q": queue_boost if queue_boost != i else -1,
+            "io_boost_q": queue_io_boost if queue_io_boost != i else -1,
+            "max_drop_t": queue_drop_t,
+            "max_boost_t": queue_boost_t,
+            "max_rr_t": queue_rr_t
+        })
+
+    return structure
 
 class Scheduler:
     def __init__(self, queues: list[dict[str, int]], ):
@@ -334,12 +376,9 @@ def main():
         max_time += p.duration
         max_time += m.floor((p.duration - 1) / p.io_frequency ) if p.io_frequency != 0 else 0
 
-    queue_params = [
-        { "type": 0, "drop_q": 1, "boost_q": -1, "max_drop_t": 1, "max_boost_t": -1, "io_boost_q": -1 },
-        { "type": 1, "drop_q": -1, "boost_q": -1, "max_drop_t": -1, "max_boost_t": -1, "io_boost_q": 1 }
-    ]
-
-    scheduler = Scheduler(queue_params)
+    genome = 6794754254355170913406781093340568290949153219954559846922636346711752677269652499655125485674167421237562887824717810636356715124886980125788104449007509254337865411297272303893811997611822005705118127544471045402318763003930730348
+    structure = construct_scheduler_structure(genome)
+    scheduler = Scheduler(structure)
     next_process_idx = 0
     for t in range(0, max_time):
         while next_process_idx < len(data_set) and t == data_set[next_process_idx].arrival_time:
