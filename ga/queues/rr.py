@@ -46,22 +46,35 @@ class RR:
             temp.rr_t = 0
             self.jobs.pop(0)
             self.jobs.append(temp)
+            return output
 
         if self.io_boost_q != None and '!' in output:
             self.io_boost_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         if self.boost_q != None and self.jobs[0].boost_t == self.max_boost_t:
             # Boost the job
             self.boost_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         if self.drop_q != None and self.jobs[0].drop_t == self.max_drop_t:
             # Drop the job
             self.drop_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         return output
+
+    def set_boost(self, queue):
+        self.boost_q = queue
+
+    def set_drop(self, queue):
+        self.drop_q = queue
+
+    def set_io_boost(self, queue):
+        self.io_boost_q = queue

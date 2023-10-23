@@ -1,4 +1,5 @@
 import process
+import process
 
 class FCFSJob:
     def __init__(self, job: process.Job):
@@ -12,6 +13,7 @@ class FCFS:
         self.max_boost_t = max_boost_t
         self.drop_q = None
         self.boost_q = None
+        self.io_boost_q = None
         self.jobs: list[FCFSJob] = []
         self.size = 0
 
@@ -31,23 +33,27 @@ class FCFS:
             # Remove the job
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
-        if '!' in output:
+        if self.io_boost_q != None and '!' in output:
             self.io_boost_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         if self.boost_q != None and self.jobs[0].boost_t == self.max_boost_t:
             # Boost the job
             self.boost_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         if self.drop_q != None and self.jobs[0].drop_t == self.max_drop_t:
             # Drop the job
             self.drop_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         return output
 

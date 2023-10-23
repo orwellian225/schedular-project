@@ -44,18 +44,21 @@ class STCF:
             self.io_boost_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         if self.boost_q != None and self.jobs[0].boost_t == self.max_boost_t:
             # Boost the job
             self.boost_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         if self.drop_q != None and self.jobs[0].drop_t == self.max_drop_t:
             # Drop the job
             self.drop_q.insert(self.jobs[0].job)
             self.jobs.pop(0)
             self.size -= 1
+            return output
 
         return output
 
