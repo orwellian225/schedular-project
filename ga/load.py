@@ -5,7 +5,7 @@ import os
 small_dir = 'Process_List/Small'
 medium_dir = 'Process_List/Medium'
 large_dir = 'Process_List/Large'
-current_dir = large_dir 
+current_dir = small_dir 
 def load_data() -> list[list[process.Process]]:
 
     result = []
